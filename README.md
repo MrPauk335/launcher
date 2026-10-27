@@ -5,6 +5,9 @@
 > reference only. What changed and how to check it: [TELEMETRY.md](TELEMETRY.md).
 >
 > Build: `npm ci && npx tauri build` (Node 22 and Rust; Bun is only needed for `npm test`).
+> Before you hand a build to anyone, set `MILLIDA_MS_CLIENT_ID` to your own Azure app
+> registration. Without it the binary falls back to Millida's public app id, and their
+> `TRADEMARK.md` calls signing in through it from another build abuse.
 > The updater is disabled in this fork, so the launcher does not update itself.
 
 <p align="center">

@@ -5,6 +5,9 @@
 > Что именно изменено и как это проверить: [TELEMETRY.ru.md](TELEMETRY.ru.md).
 >
 > Сборка: `npm ci && npx tauri build` (нужны Node 22 и Rust; bun — только для `npm test`).
+> Прежде чем отдавать сборку кому-то, задайте `MILLIDA_MS_CLIENT_ID` — id своего
+> приложения в Azure. Без него бинарник берёт публичный id Millida, а её
+> `TRADEMARK.md` называет вход через него из чужой сборки злоупотреблением.
 > Обновлятор в форке выключен, сам лаунчер не обновляется.
 
 *[English version: README.md](README.md) | Русский*
