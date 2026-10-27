@@ -3,6 +3,9 @@
 > Millida. Everything below describes the launcher's features and comes from the
 > upstream project; the download buttons point at Millida and are kept for
 > reference only. What changed and how to check it: [TELEMETRY.md](TELEMETRY.md).
+>
+> Build: `npm ci && npx tauri build` (Node 22 and Rust; Bun is only needed for `npm test`).
+> The updater is disabled in this fork, so the launcher does not update itself.
 
 <p align="center">
   <img src=".github/readme/banner-en.png" alt="Millida Launcher: a Minecraft launcher with mods, skins and friends">
