@@ -10,7 +10,6 @@ import { playMode } from '../../lib/lobbyPlay'
 import { useLobby } from '../../state/lobbyMode'
 import { useProfiles } from '../../state/profiles'
 import { fmtN } from '../../lib/format'
-import { trackImpression } from '../../lib/uiTrack'
 import { setScreen } from '../../state/ui'
 import { loadCatalogPacks } from '../playhub/data'
 import { PRISON_SLUG } from '../playhub/featured'
@@ -86,12 +85,6 @@ export function Recommend({ on }: { on: boolean }) {
       alive = false
     }
   }, [shown, arc2])
-
-  useEffect(() => {
-    if (!on || !shown || !slide) return
-    const id = slide === 'anarchy' ? 'own_server:' + ANARCHY.mode : slide === 'prisonrpg' || slide === 'arcania' ? 'pack:' + (slide === 'arcania' ? (packs?.arcaniaSlug ?? ARCANIA_SLUG) : PRISON_SLUG) : 'promo:' + slide
-    trackImpression('recommend', [id], 'play')
-  }, [on, shown, slide])
 
   if (!shown || !slide || !slides) return null
   const go = (delta: 1 | -1) => {

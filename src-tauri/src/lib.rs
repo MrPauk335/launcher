@@ -164,10 +164,6 @@ fn avoid_webkit_compositing_on_appimage_wayland() {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    if engine::uninstall_report_requested() {
-        engine::report_uninstall();
-        return;
-    }
     cli::remember_startup_args();
     #[cfg(target_os = "linux")]
     {
@@ -206,6 +202,9 @@ pub fn run() {
                 let _ = app.deep_link().register_all();
             }
             engine::install_panic_hook(env!("CARGO_PKG_VERSION").to_string());
+            // Statistics are removed from this build: make sure the in-game mod
+            // finds the "off" switch even on an install that used an older version.
+            engine::arm_telemetry_off();
             allow_assets(app.handle());
             tray::init(app.handle());
             // macOS: the old LaunchAgent becomes a login item of the app itself, once and silently.
@@ -263,7 +262,6 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::content::core_version,
             commands::system::app_version,
-            commands::system::remember_install_id,
             commands::system::autostart_state,
             commands::system::autostart_set,
             commands::system::ui_text_keys,
@@ -281,7 +279,6 @@ pub fn run() {
             commands::content::lift_millida_mod_quarantine,
             commands::content::millida_mod_enabled,
             commands::content::set_millida_mod_enabled,
-            commands::content::set_game_telemetry,
             commands::content::pvp_hud_default,
             commands::content::set_pvp_hud_default,
             commands::content::list_versions,

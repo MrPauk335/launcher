@@ -550,22 +550,25 @@ pub fn millida_mod_wanted(profile: &str) -> bool {
     millida_mod_enabled() && millida_mod_on(profile)
 }
 
-/// Игрок выключил статистику в лаунчере: мод в игре тоже молчит. Флаг живёт
-/// файлом, потому что игру запускает Rust, а выключатель - в интерфейсе.
+/// Statistics are removed from this build, so the mod inside the game has to stay
+/// silent on every install, whatever an older version left on disk.
+///
+/// The mod understands two switches: this file, and the MILLIDA_TELEMETRY
+/// environment variable the launcher puts into the game process
+/// (engine/game/launch.rs). Both are set unconditionally now; the file is written
+/// at startup by `arm_telemetry_off`, the variable on every launch.
 fn telemetry_off_file() -> PathBuf {
     data_dir().join("telemetry-off")
 }
 
+/// Always false: there is no switch in the interface that could turn it on.
 pub fn game_telemetry_enabled() -> bool {
-    enabled_at(&telemetry_off_file())
+    false
 }
 
-pub fn set_game_telemetry_enabled(on: bool) -> Result<(), String> {
-    if on {
-        turn_on_at(&telemetry_off_file())
-    } else {
-        turn_off_at(&telemetry_off_file())
-    }
+/// Writes the switch file the mod reads. Called once at startup.
+pub fn arm_telemetry_off() {
+    let _ = turn_off_at(&telemetry_off_file());
 }
 
 /// Отсутствие файла - это «включено»: у тех, кто не трогал настройку, файла нет,

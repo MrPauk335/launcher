@@ -12,7 +12,6 @@ import { foundKey } from '../lib/imports'
 import { setSoundMode, soundMode } from '../lib/sound'
 import { setMusicAutostart, useMusic } from '../state/music'
 import { track } from '../lib/telemetry'
-import { trackImportFailure } from '../lib/importTrack'
 import { MovePanel } from './MoveBuilds'
 import { autostartOn, setAutostart } from '../lib/autostart'
 import { hasMillidaAccount } from '../lib/api'
@@ -22,7 +21,6 @@ import { dropInviteCode, lookupInviter, onboardingInvite, peekInviteCode } from 
 import { INVITEE_GIFTS } from '../lib/inviteGifts'
 import { t, useT } from '../i18n'
 import { isPickCancelled } from '../lib/coreErrors'
-import { OnboardingSurvey } from '../components/OnboardingSurvey'
 
 function Welcome({ nick }: { nick: string }) {
   const t = useT()
@@ -195,7 +193,6 @@ function ImportStep() {
         ok++
       } catch (err) {
         console.error('[onb-import]', it.path, err)
-        trackImportFailure(it.source, err, it)
         showToast(t('Не удалось перенести «{name}»', { name: it.name }), 'error')
       }
     }
@@ -231,7 +228,6 @@ function ImportStep() {
         // Своя фраза бэкенда («Файл не найден», «Не удалось распаковать») — до двоеточия;
         // системный хвост и английские ошибки ОС — только в лог.
         console.error('[onb-import-file]', err)
-        trackImportFailure('file', err)
         const head = String(err).split(':')[0].trim()
         showToast(/^[А-ЯЁ]/.test(head) ? head : t('Не удалось импортировать файл'), 'error')
       })
@@ -427,8 +423,7 @@ export function OnboardingModal() {
         {step === INVITER_STEP ? <InviterStep /> : null}
         {step === 2 ? <ImportStep /> : null}
         {step === 3 ? <LookStep /> : null}
-        {step === 4 ? <OnboardingSurvey /> : null}
-        {step === 5 ? <ReadyStep /> : null}
+        {step === 4 ? <ReadyStep /> : null}
 
         <div className="onb-actions">
           {step > 0 ? (

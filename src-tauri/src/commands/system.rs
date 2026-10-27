@@ -110,11 +110,6 @@ pub fn app_version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
 }
 
-#[tauri::command]
-pub fn remember_install_id(id: String) -> Result<(), String> {
-    engine::remember_install_id(&id)
-}
-
 /// Флаг, с которым система запускает лаунчер при входе пользователя.
 pub const AUTOSTART_ARG: &str = "--autostart";
 
@@ -185,7 +180,8 @@ pub struct DeviceSpecs {
 /// The facts never change while the process lives, and collecting them opens
 /// OS performance counters, so they are read once on the blocking pool.
 #[tauri::command]
-// Hardware info for telemetry: CPU, cores, memory, graphics cards, OS. No nickname, no serial numbers. This function sends nothing by itself.
+// Hardware info for the launcher itself (RAM limits, graphics tier, the diagnostics text): CPU, cores, memory, graphics cards, OS.
+// It is read locally and returned to the window. Nothing is sent anywhere.
 pub async fn device_specs() -> Result<DeviceSpecs, String> {
     static SPECS: std::sync::OnceLock<DeviceSpecs> = std::sync::OnceLock::new();
     if let Some(known) = SPECS.get() {

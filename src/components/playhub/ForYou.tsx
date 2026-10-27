@@ -23,7 +23,6 @@ import type { HubPack } from './data'
 import { ArcaniaCard } from '../arcania/ArcaniaCard'
 import { isArcania2, useArcania2Live } from '../../lib/arcaniaRelease'
 import { PackTileArt } from './packArt'
-import { trackImpression } from '../../lib/uiTrack'
 import { track } from '../../lib/telemetry'
 import { loadListing } from '../catalog/site'
 import type { SiteCard, SiteSlug } from '../catalog/site'
@@ -562,7 +561,6 @@ export function ForYou({
   const shownKey = shown.map((x) => x.key).join(',')
   useEffect(() => {
     if (!on || !ownKey || !packs.length) return
-    trackImpression('foryou', [ownKey, ...head.map((p) => (p.premium ? 'premium:' : 'modpacks/') + (p.slug || p.id)), ...shown.map((x) => x.key)], 'playhub')
     writeLog(logSeen(readLog(), shown.filter((x) => x.why !== 'server' && x.why !== 'preview').map((x) => x.key), day))
     track('impression', { section: 'recs_view', exp: RECS_EXPERIMENT, variant: ab.variant, cards: shown.length, surface: 'playhub' })
   }, [on, ownKey, shownKey, head.map((p) => p.id).join(',')])

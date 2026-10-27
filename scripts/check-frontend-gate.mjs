@@ -1,5 +1,7 @@
-import { readFileSync, readdirSync } from 'node:fs'
+import { readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { tmpdir } from 'node:os'
+import { spawnSync } from 'node:child_process'
 
 // The core reinstalls the launcher until the frontend calls `frontend_ready`,
 // so a build missing that call would reinstall itself on every start.
@@ -11,6 +13,20 @@ const OLD_WEBKIT_BREAKERS = ['(?<=', '(?<!', '??=', '||=', '&&=']
 // The splash lives in index.html, which the CSS pipeline does not lower: `inset`
 // (Safari 14.1) is dropped there and the logo sticks to the top-left corner.
 const OLD_WEBKIT_HTML_BREAKERS = ['inset:']
+
+/// Parses the chunk the way the webview would. `node --check` reads .mjs as an ES module.
+function parsesAsModule(text) {
+  const file = join(tmpdir(), 'notrace-gate-' + process.pid + '.mjs')
+  try {
+    writeFileSync(file, text)
+    return spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' }).status === 0
+  } catch {
+    return true
+  } finally {
+    rmSync(file, { force: true })
+  }
+}
+
 const root = join(process.cwd(), 'dist')
 const dir = join(root, 'assets')
 
@@ -41,15 +57,10 @@ if (broken.length > 0) {
 
 // The bundler can emit a chunk that does not parse (an await it moved into a plain arrow): every
 // screen importing it shows "Unexpected reserved word" instead of opening.
-const transpiler = new Bun.Transpiler({ loader: 'js' })
-const unparsable = sources.filter((c) => {
-  try {
-    transpiler.transformSync(c.text)
-    return false
-  } catch {
-    return true
-  }
-})
+//
+// This fork builds with Node alone (no Bun): `node --check` on a .mjs copy parses the chunk as a
+// module and throws on the same syntax errors Bun.Transpiler did.
+const unparsable = sources.filter((c) => !parsesAsModule(c.text))
 if (unparsable.length > 0) {
   throw new Error(
     `чанки ${unparsable.map((c) => c.name).join(', ')} не разбираются как JavaScript — экраны, которые их ` +

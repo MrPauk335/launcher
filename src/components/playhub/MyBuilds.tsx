@@ -23,7 +23,6 @@ import { openModal, showToast } from '../../state/ui'
 import { BuildIcon, IconPicker } from './BuildIcon'
 import { hoursText } from './Hours'
 import '../../styles/pixel/playhub.css'
-import { trackImportFailure } from '../../lib/importTrack'
 import { t, tx, useT } from '../../i18n'
 import { isPickCancelled } from '../../lib/coreErrors'
 
@@ -415,7 +414,6 @@ export function TakeAllCard({ have, bar }: { have: string[]; bar?: boolean }) {
         ok++
       } catch (e) {
         console.error('[take-all]', it.name, e)
-        trackImportFailure(it.source, e, it)
       }
       setDone((d) => d + 1)
     }
@@ -440,7 +438,6 @@ export function TakeAllCard({ have, bar }: { have: string[]; bar?: boolean }) {
         showToast(t('Импортировано: {name}', { name: p.name }), 'ok')
       })
       .catch((err) => {
-        trackImportFailure('file', err)
         if (!isPickCancelled(err)) showToast('' + err, 'error')
       })
       .finally(() => setBusy(false))

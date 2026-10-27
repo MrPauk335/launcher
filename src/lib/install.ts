@@ -13,7 +13,6 @@ import { track, trackTimed } from './telemetry'
 import { runInstall } from '../state/installs'
 import { keyContent } from './installKeys'
 import { LOADER_NAME } from './format'
-import { actionSource } from './uiTrack'
 import { errorCode } from './telemetryPrivacy'
 import { t } from '../i18n'
 
@@ -32,7 +31,7 @@ const ruKind = (): Record<string, string> => ({
  * бывает дольше 20 секунд, за которые клик-источник живёт.
  */
 export function catalogInstallTracker(kind: string, id: string | number | undefined | null, section?: string) {
-  const source = actionSource('catalog').source
+  const source = 'catalog'
   return () => {
     track('catalog_install', { kind, id: String(id ?? '').slice(0, 80), source, section: (section || kind).slice(0, 32) })
     noteInstallKind(kind)

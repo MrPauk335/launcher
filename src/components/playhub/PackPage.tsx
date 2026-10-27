@@ -18,7 +18,6 @@ import { useProfiles } from '../../state/profiles'
 import { runInstall, useInstalls } from '../../state/installs'
 import { showToast } from '../../state/ui'
 import { track } from '../../lib/telemetry'
-import { actionSource } from '../../lib/uiTrack'
 import { keyCatalogPack, keyMrModpack } from '../../lib/installKeys'
 import type { SnapshotServer } from '../../lib/snapshot'
 import { PackKeyField } from '../PackKeyModal'
@@ -288,7 +287,7 @@ function MrInstallButton({ pack }: { pack: HubPack }) {
       running: t('Скачивание…'),
       run: () => installModpack(slug),
       onDone: (p) => {
-        track('catalog_install', { kind: 'modpack', id: slug, source: actionSource('pack_page').source, section: 'pack_page' })
+        track('catalog_install', { kind: 'modpack', id: slug, source: 'pack_page', section: 'pack_page' })
         noteInstallKind('modpack')
         useProfiles.getState().setSelected(p.name)
         void useProfiles.getState().refresh()

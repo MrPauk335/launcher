@@ -11,11 +11,11 @@ use std::sync::{mpsc, Arc, Mutex};
 use std::time::Duration;
 
 use base64::Engine as _;
-use millida_voice::client::{Config, Events, VoiceClient};
-use millida_voice::dsp::{Noise, Processing};
-use millida_voice::link::Session;
-use millida_voice::party::{party_voice_player, valid_party_id};
-use millida_voice::wire::{parse_uuid, Uuid};
+use notrace_voice::client::{Config, Events, VoiceClient};
+use notrace_voice::dsp::{Noise, Processing};
+use notrace_voice::link::Session;
+use notrace_voice::party::{party_voice_player, valid_party_id};
+use notrace_voice::wire::{parse_uuid, Uuid};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tauri::{AppHandle, Emitter};

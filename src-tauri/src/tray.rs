@@ -109,7 +109,7 @@ pub fn init(app: &AppHandle) {
         Err(_) => return,
     };
     let mut b = TrayIconBuilder::with_id("main")
-        .tooltip("Millida Launcher")
+        .tooltip("NoTrace Launcher")
         .menu(&menu)
         .show_menu_on_left_click(false)
         .on_menu_event(|app, e| match e.id.as_ref() {

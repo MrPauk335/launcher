@@ -1,8 +1,8 @@
 [package]
-name = "millida-launcher"
+name = "notrace-launcher"
 version = "2.0.278"
-description = "Millida Launcher — безопасный лаунчер Minecraft"
-authors = ["Millida"]
+description = "NoTrace Launcher — форк Millida Launcher без телеметрии"
+authors = ["NoTrace Launcher contributors"]
 edition = "2021"
 license = "GPL-3.0-only"
 
@@ -11,7 +11,7 @@ members = [".", "voice"]
 default-members = [".", "voice"]
 
 [lib]
-name = "millida_launcher_lib"
+name = "notrace_launcher_lib"
 crate-type = ["rlib"]
 
 [build-dependencies]
@@ -70,7 +70,7 @@ lewton = "0.10"
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp"] }
 tauri-plugin-global-shortcut = "2.3.2"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
-millida-voice = { path = "voice" }
+notrace-voice = { path = "voice" }
 
 [target.'cfg(windows)'.dependencies]
 # DPAPI for device.key: the file is useless outside the Windows account.
@@ -117,7 +117,7 @@ codegen-units = 1
 
 # The app crate is the critical path of a release build: with a single codegen
 # unit it compiles serially long after every dependency has finished.
-[profile.release.package.millida-launcher]
+[profile.release.package.notrace-launcher]
 codegen-units = 16
 
 # Local iteration profile. A separate named profile keeps its own target dir and

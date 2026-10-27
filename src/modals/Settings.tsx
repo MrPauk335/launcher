@@ -63,7 +63,7 @@ import { type MarketFeature, marketOffers, t, useMarket, useT } from '../i18n'
 import { LangPicker } from '../components/LangPicker'
 import { writePref } from '../lib/prefs'
 import { setMusicAutostart } from '../state/music'
-import { setTelemetryEnabled, telemetryEnabled, track, trackFailure } from '../lib/telemetry'
+import { track, trackFailure } from '../lib/telemetry'
 import { getAccount, getMillidaAccount, useAccounts } from '../state/accounts'
 import { balanceText, openTopup, useMoney } from '../lib/useMoney'
 // Наличие аккаунта берём из стора, а не вызовом hasMillidaAccount(): вызов не
@@ -245,7 +245,6 @@ export function Settings({ on }: { on: boolean }) {
   const [moving, setMoving] = useState(false)
   const [winMode, setWinMode] = useState<LaunchWindowMode>(launchWindowMode)
   const [trayClose, setTrayCloseOn] = useState(trayCloseEnabled)
-  const [telemetryOn, setTelemetryOn] = useState(telemetryEnabled)
   const [backAfterGame, setBackAfterGame] = useState(restoreOnGameExit)
   const [tray, setTray] = useState(hasTray)
   const [autostart, setAutostartOn] = useState(false)
@@ -1107,18 +1106,6 @@ export function Settings({ on }: { on: boolean }) {
             }}
           />
         </Row>
-        <Row title={t('Статистика использования')} hint={t('Версия, железо, вылеты, клики. Без паролей и файлов')} keys="телеметрия данные приватность анонимная статистика">
-          <Toggle
-            id="setTelemetry"
-            label={t('Статистика использования')}
-            on={telemetryOn}
-            onChange={() => {
-              const next = !telemetryOn
-              setTelemetryOn(next)
-              setTelemetryEnabled(next)
-            }}
-          />
-        </Row>
       </Group>
     </>
   )
@@ -1129,7 +1116,7 @@ export function Settings({ on }: { on: boolean }) {
         <div className="s2-hero">
           <img src="/millida-logo.svg" alt="" width={48} height={48} />
           <span className="s2-hero-txt">
-            <b>Millida Launcher</b>
+            <b>NoTrace Launcher</b>
             <small>
               {upd
                 ? updStaged

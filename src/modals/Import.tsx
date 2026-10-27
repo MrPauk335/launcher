@@ -14,7 +14,6 @@ import { backdropClose } from '../lib/dismiss'
 import { usePackCode } from '../state/packCode'
 import { showReward } from '../components/reward/RewardReveal'
 import { BuildIcon } from '../components/playhub/BuildIcon'
-import { trackImportFailure } from '../lib/importTrack'
 import { t, tx, useT } from '../i18n'
 import { isPickCancelled } from '../lib/coreErrors'
 
@@ -57,7 +56,6 @@ export function ImportModal() {
         close()
       })
       .catch((e) => {
-        trackImportFailure('packwiz', e)
         showToast(apiErrorText(e, t('Не удалось поставить пак по ссылке')), 'error')
       })
       .finally(() => setLinkBusy(false))
@@ -80,7 +78,6 @@ export function ImportModal() {
       })
       .catch((err) => {
         if (isPickCancelled(err)) return
-        trackImportFailure('file', err)
         showToast('' + err, 'error')
       })
       .finally(() => setFileBusy(false))
@@ -207,7 +204,6 @@ export function ImportModal() {
                           imported(p)
                         })
                         .catch((err) => {
-                          trackImportFailure(it.source, err, it)
                           setRows((r) => ({ ...r, [i]: 'idle' }))
                           showToast('' + err, 'error')
                         })

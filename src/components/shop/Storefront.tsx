@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import type { ReactNode } from 'react'
-import { trackImpression } from '../../lib/uiTrack'
 import { Icon } from '../Icon'
 import type { ItemRef, ShopBundle, ShopCard, ShopSource } from '../../lib/rubies'
 import { cosmeticSlotName } from '../../lib/cosmeticSlots'
@@ -171,7 +170,6 @@ export function Showcase({
   const shown = [...(f ? [f.code] : []), ...(d ? [d.code] : []), ...byRarity(items).map((c) => c.item.code)]
   const shownKey = shown.join(',')
   useEffect(() => {
-    trackImpression('storefront', shown, 'rubies')
   }, [shownKey])
   return (
     <div className="card sh-block" data-section="storefront">
@@ -323,7 +321,6 @@ export function ForYou({ lead, cards, refreshAt, ...p }: { lead: ReactNode; card
     .map((c) => c.item.code)
     .join(',')
   useEffect(() => {
-    trackImpression('shop_foryou', shownKey.split(','), 'rubies')
   }, [shownKey])
   return (
     <div className="card sh-block" data-section="shop_foryou">

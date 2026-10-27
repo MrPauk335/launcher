@@ -7,7 +7,6 @@ import { useProfiles } from '../state/profiles'
 import { showToast, useUi } from '../state/ui'
 import { track } from '../lib/telemetry'
 import type { ScreenId } from '../state/ui'
-import { trackImportFailure } from '../lib/importTrack'
 import { useT } from '../i18n'
 
 const SCREENS: ScreenId[] = ['play', 'builds']
@@ -51,7 +50,6 @@ export function PackDrop() {
           void useProfiles.getState().refresh()
           showToast(t('Импортировано: {name}', { name: prof.name }))
         } catch (err) {
-          trackImportFailure('drop', err, { name: pack.name })
           showToast('' + err, 'error')
         }
       }

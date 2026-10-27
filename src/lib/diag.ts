@@ -14,7 +14,6 @@ import type { CrashEntry, DeviceSpecs, JavaRuntime, Profile, SkinDiag } from '..
 import { hasTauri } from '../ipc/tauri'
 import { detectGpu } from './gpu'
 import { recentIssues } from './crash'
-import { installId, telemetryEnabled } from './telemetry'
 import { pendingUpdate, updateReady } from './updater'
 import { soundMode, soundVolume } from './sound'
 import { skinSource } from './gameProfile'
@@ -123,11 +122,10 @@ export async function buildDiagnostics(): Promise<string> {
   const skin = tauri && acc ? await safe(() => skinDiagnose(acc.nick, !!millida)) : null
 
   const lines: (string | null)[] = [
-    '=== Millida Launcher · диагностика ===',
+    '=== NoTrace Launcher · диагностика ===',
     'Снято: ' + new Date().toISOString(),
     'Версия: ' + (ver || 'неизвестна') + (tauri ? '' : ' (веб-режим, без ядра)'),
     upd ? 'Обновление: доступна ' + upd.version + (updateReady() ? ' (готова к установке)' : ' (качается)') : 'Обновление: нет',
-    'Install ID: ' + installId(),
     flatpak ? 'Упаковка: flatpak' : null,
     '',
     '--- Система ---',
@@ -159,7 +157,7 @@ export async function buildDiagnostics(): Promise<string> {
     'Звук: ' + soundMode() + ' · громкость ' + soundVolume() + '%',
     'При запуске игры: ' + windowModeLabel() + ' · возврат после игры: ' + yesNo(restoreOnGameExit()),
     'Трей: ' + (hasTray() ? 'доступен' : 'недоступен') + ' · закрывать в трей: ' + yesNo(trayCloseEnabled()),
-    'Телеметрия: ' + yesNo(telemetryEnabled()) + ' · статистика друзьям: ' + yesNo(statsShared()),
+    'Телеметрия: выключена в сборке · статистика друзьям: ' + yesNo(statsShared()),
     '',
     '--- Диагностика ---',
     'Сессия: ' + Math.round(performance.now() / 1000) + ' с',

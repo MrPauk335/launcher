@@ -227,7 +227,6 @@ import { findProfile, refreshProfiles } from './state/profiles'
 import { gameCrashData } from './lib/crashEvent'
 import { initMusic, startMusicAfterLogin, stopMusicNow } from './state/music'
 import { initSounds, playSound } from './lib/sound'
-import { initUiTracking } from './lib/uiTrack'
 import { initDeepLinks } from './lib/deeplink'
 import { initCli } from './lib/cli'
 import { initSessionKick } from './lib/sessionKick'
@@ -247,7 +246,6 @@ import { listenGameCrash, listenGameExit, listenGameServer, listenLaunchWarning,
 import { useCrash } from './state/crash'
 import { fixMark, forgetCrash, rememberCrash } from './lib/repair'
 import { tryAutoHeal } from './lib/autoHeal'
-import { sendCompatSignal } from './lib/compatSignal'
 import { syncRunningGame, useGame } from './state/game'
 import { watchPromo } from './state/promo'
 import { watchArcania2 } from './lib/arcaniaRelease'
@@ -259,8 +257,8 @@ import { LiveLog, startLiveLog } from './components/LiveLog'
 import { startLagHelp } from './lib/lagHelp'
 import { hideBoot } from './lib/boot'
 import { frontendReady } from './ipc/commands'
-import { initTelemetry, track, trackAppExit } from './lib/telemetry'
-import { reportWebviewFailure, setLauncherIdleMemory, watchHeap, watchWebviewContext } from './lib/webviewHealth'
+import { track, trackAppExit } from './lib/telemetry'
+import { reportWebviewFailure, setLauncherIdleMemory } from './lib/webviewHealth'
 import { onRenderGate, renderLive } from './lib/renderGate'
 import { flushPrefs, hydratePrefs } from './lib/prefs'
 
@@ -387,14 +385,6 @@ export function App() {
     initTray()
     initMusic()
     initSounds()
-    initUiTracking(
-      () => useUi.getState().screen,
-      (cb) => useUi.subscribe((st, prev) => cb(st.screen, prev.screen)),
-    )
-    watchWebviewContext(
-      () => useUi.getState().screen,
-      (cb) => useUi.subscribe((st, prev) => void (st.screen !== prev.screen && cb(st.screen))),
-    )
     void initDesktopToasts()
     void initAutostart()
     initDeepLinks()
@@ -483,8 +473,7 @@ export function App() {
       void refreshMsAccounts()
       void flushNativeCrashes()
       hideBoot()
-      void initTelemetry(performance.now()).then(reportWebviewFailure)
-      watchHeap()
+      void reportWebviewFailure()
     })
     return () => {
             stopRelay()
@@ -645,7 +634,6 @@ export function App() {
       track('game_exit', fixed ? { fix: fixed } : {}, { durationMs: gameStartedAt ? Date.now() - gameStartedAt : undefined })
       if (calm) {
         forgetCrash(profile, gameStartedAt)
-        void sendCompatSignal(profile, null)
       }
       useGame.getState().removeRunning(profile)
       // A second copy may still be alive — only the last exit puts the launcher back into lobby.
@@ -690,7 +678,6 @@ export function App() {
       if (!tryAutoHeal(info, lastGameStartAt)) useCrash.getState().show(info)
       if (info && info.profile) {
         rememberCrash(info)
-        void sendCompatSignal(info.profile, info)
       }
       if (info && info.profile) {
         void reportGameCrash(info, {

@@ -1,3 +1,9 @@
+> **This is a fork, not the official build.** NoTrace Launcher is Millida Launcher
+> with the usage statistics removed. It is not released, approved or supported by
+> Millida. Everything below describes the launcher's features and comes from the
+> upstream project; the download buttons point at Millida and are kept for
+> reference only. What changed and how to check it: [TELEMETRY.md](TELEMETRY.md).
+
 <p align="center">
   <img src=".github/readme/banner-en.png" alt="Millida Launcher: a Minecraft launcher with mods, skins and friends">
 </p>

@@ -77,15 +77,11 @@ Var MillidaExitCode
   Delete /REBOOTOK "$INSTDIR\*${MILLIDA_ASIDE}*"
 !macroend
 
-; The report runs after the running launcher is closed: a heartbeat sent later
-; would mark the install alive again on the server. The timeout keeps a hung
-; network from holding the uninstall.
+; This build reports nothing when it is removed: the upstream uninstaller ran
+; the launcher with --report-uninstall to send the install id to the server, and
+; that argument no longer exists.
 !macro NSIS_HOOK_PREUNINSTALL
   !insertmacro MillidaFreeInstallDir
-  ${If} ${FileExists} "$INSTDIR\${MILLIDA_MAIN_EXE}"
-    nsExec::Exec /TIMEOUT=10000 '"$INSTDIR\${MILLIDA_MAIN_EXE}" --report-uninstall'
-    Pop $MillidaExitCode
-  ${EndIf}
 !macroend
 
 !macro NSIS_HOOK_POSTUNINSTALL

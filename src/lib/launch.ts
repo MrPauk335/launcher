@@ -18,8 +18,7 @@ import { setVerifiedSeconds } from '../state/playStats'
 import { showToast, useUi } from '../state/ui'
 import { useGame } from '../state/game'
 import { applyLaunchWindowMode } from './window'
-import { liveBeat, liveBeatPayload, trackFailure, trackTimed } from './telemetry'
-import { launchAttribution } from './uiTrack'
+import { trackFailure, trackTimed } from './telemetry'
 import { failedHost } from './userEnvError'
 import { buildTag } from './telemetryPrivacy'
 import { launchFailure } from './launchFailure'
@@ -29,8 +28,6 @@ import { followFriendBuild } from './friendBuild'
 import { adoptLegacyRam, pendingLegacyRamMb } from './ramPref'
 import { rememberPlay } from './recentPlay'
 import { requiresMillidaAuth, serverNeedsMillidaAuth } from './ownServer'
-import { useServers } from '../state/servers'
-import { publicServerLabel } from './liveServer'
 import { NATIVE_NEEDS_MILLIDA, isNativeGame } from './nativeGame'
 import { stopInstall } from '../state/installs'
 import { holdLaunchForHdSkin } from './skinLock'
@@ -112,7 +109,7 @@ export function discordPresence(status?: string, server?: string | null): Promis
   const details = playing ? (build ? `Playing · ${build}` : 'In game') : 'In launcher'
   const addr = (session && session.server) || ''
   const place = (session && (session.serverName || session.server)) || server || ''
-  const state = playing && place ? `Server: ${place}` : nick ? `Nick: ${nick}` : 'Millida Launcher'
+  const state = playing && place ? `Server: ${place}` : nick ? `Nick: ${nick}` : 'NoTrace Launcher'
   // Версия сборки уезжает в ссылку: принимающий лаунчер иначе знает только
   // адрес и заходит тем, что у гостя выбрано сейчас.
   const joinUrl = playing && addr ? joinPageUrl(addr, (session && session.serverName) || null, pack && pack.version) : ''
@@ -150,25 +147,13 @@ export function heartbeat(status?: string, server?: string | null) {
     new Promise<string>((resolve) => setTimeout(() => resolve(''), PRESENCE_WAIT_MS)),
   ])
   const build = (playing && session && session.profile) || null
-  const pack = build ? useProfiles.getState().profiles.find((p) => p.name === build) : undefined
-  // Имя сборки придумал игрок — в телеметрию уходит слаг каталога или отпечаток.
   const slug = build && hasTauri() ? loadProfileSettings(build).catch(() => null) : Promise.resolve(null)
-  const liveMeta = slug.then((st) => ({
-    build: buildTag(build, st?.catalogPackSlug || st?.modpackSlug),
-    mc: (pack && pack.version) || null,
-    // Телеметрия живого онлайна: только сервер рейтинга или наш. Друзьям (ниже) уходит то, что человек им показывает.
-    server: playing && session ? publicServerLabel(session.server, server || session.serverName, useServers.getState().list) : null,
-  }))
   const catalogPack = slug.then((st) => (st?.catalogPackSlug || '').trim() || null)
-  const liveStatus = playing ? 'playing' : 'idle'
-  if (!hasMillidaAccount()) {
-    void liveMeta.then((meta) => liveBeat(liveStatus, meta))
-    return
-  }
-  // A signed-in launcher sends one request per beat: the launcher heartbeat rides inside
-  // the presence one instead of going out as a second request.
-  void Promise.all([presence, liveMeta, catalogPack])
-    .then(async ([discordUserId, meta, catalogSlug]) => {
+  if (!hasMillidaAccount()) return
+  // A signed-in launcher sends one request per beat for the friends list. The
+  // "in lobby / in game" statistics pulse that used to ride inside it is removed.
+  void Promise.all([presence, catalogPack])
+    .then(async ([discordUserId, catalogSlug]) => {
       const state = {
         status: beat,
         server: (playing && (server || (session && (session.serverName || session.server)))) || null,
@@ -182,10 +167,9 @@ export function heartbeat(status?: string, server?: string | null) {
       if (!presenceBeatDue(isPresenceTracked(), key, sentBeat, sendingBeat)) return
       sendingBeat = key
       try {
-        const telemetry = await liveBeatPayload(liveStatus, meta).catch(() => null)
         const r = await api('/friends/presence/heartbeat', {
           method: 'POST',
-          body: JSON.stringify({ ...state, ...(telemetry ? { telemetry } : {}) }),
+          body: JSON.stringify(state),
         })
         sentBeat = key
         setVerifiedSeconds((r as { verifiedSeconds?: number | null })?.verifiedSeconds ?? null)
@@ -553,7 +537,6 @@ function doLaunch(name: string) {
     build: prof ? buildTag(prof) || 'default' : 'default',
     mc: (launched && launched.version) || 'latest',
     loader: (launched && (launched.loader || (launched.fabric ? 'fabric' : 'vanilla'))) || 'vanilla',
-    ...launchAttribution('other'),
   }
   // Read when reported, not up front: the update before the launch changes the pack version.
   const packInfo = (): Promise<Record<string, string>> => prof

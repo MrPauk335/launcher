@@ -1,12 +1,12 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Millida Launcher",
+  "productName": "NoTrace Launcher",
   "version": "2.0.278",
-  "identifier": "net.millida.launcher",
+  "identifier": "net.notrace.launcher",
   "build": {
-    "beforeDevCommand": "bun run dev",
+    "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:5173",
-    "beforeBuildCommand": "bun run build:web",
+    "beforeBuildCommand": "npm run build:web",
     "frontendDist": "../dist"
   },
   "app": {
@@ -14,7 +14,7 @@
     "withGlobalTauri": false,
     "windows": [
       {
-        "title": "Millida Launcher",
+        "title": "NoTrace Launcher",
         "width": 1200,
         "height": 760,
         "minWidth": 980,
@@ -184,12 +184,12 @@
       "rpm",
       "appimage"
     ],
-    "publisher": "Millida",
-    "homepage": "https://millida.net/launcher",
-    "copyright": "© 2026 Millida (ИП Веселов Никита Николаевич)",
+    "publisher": "NoTrace",
+    "homepage": "https://github.com/millida/launcher",
+    "copyright": "© 2026 NoTrace Launcher contributors. Based on Millida Launcher, GPL-3.0",
     "category": "Game",
     "shortDescription": "Лаунчер Minecraft",
-    "longDescription": "Лаунчер Minecraft от Millida: версии от Mojang, загрузчики Fabric, Quilt, Forge и NeoForge, моды и модпаки с Modrinth и CurseForge.",
+    "longDescription": "NoTrace Launcher — форк лаунчера Millida без статистики использования: версии от Mojang, загрузчики Fabric, Quilt, Forge и NeoForge, моды и модпаки с Modrinth и CurseForge.",
     "icon": [
       "icons/icon.icns",
       "icons/icon.ico",

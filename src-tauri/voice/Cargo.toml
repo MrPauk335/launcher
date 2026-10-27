@@ -1,5 +1,5 @@
 [package]
-name = "millida-voice"
+name = "notrace-voice"
 version = "0.1.0"
 description = "Party voice client for the Millida voice relay"
 edition = "2021"

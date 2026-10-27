@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { rememberLobbyOrigin } from '../lib/uiTrack'
 import { api } from '../lib/api'
 import { loadShowcase, packFacts } from '../lib/premium'
 import type { PremiumPack } from '../lib/premium'
@@ -126,7 +125,6 @@ export const useLobby = create<LobbyState>((set, get) => ({
   premiumTarget: null,
   hubTarget: null,
   pick: (m) => {
-    rememberLobbyOrigin()
     try {
       localStorage.setItem(KEY, JSON.stringify(m))
       localStorage.removeItem(OB_KEY)

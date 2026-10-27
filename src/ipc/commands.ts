@@ -1144,7 +1144,6 @@ export interface CrashEntry {
 }
 
 export const appVersion = () => invoke<string>('app_version')
-export const rememberInstallId = (id: string) => invoke<void>('remember_install_id', { id })
 /** Запуск вместе с системой: включён ли и включить/выключить (ответ — итог). */
 export const autostartState = () => invoke<boolean>('autostart_state')
 /** Иконка окна/панели задач/Dock: default | spark | gold | diamond. */
@@ -1657,7 +1656,6 @@ export const millidaModState = (profile: string) => invoke<MillidaModState>('mil
 export const millidaModInstall = (profile: string) => invoke<MillidaModState>('millida_mod_install', { profile })
 export const millidaModEnabled = () => invoke<boolean>('millida_mod_enabled')
 export const setMillidaModEnabled = (on: boolean) => invoke<void>('set_millida_mod_enabled', { on })
-export const setGameTelemetry = (on: boolean) => invoke<void>('set_game_telemetry', { on })
 export const pvpHudDefault = () => invoke<boolean>('pvp_hud_default')
 export const setPvpHudDefault = (on: boolean) => invoke<void>('set_pvp_hud_default', { on })
 

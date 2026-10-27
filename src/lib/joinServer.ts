@@ -14,7 +14,6 @@ import { pingVersions, serverVersions } from './mcVersion'
 import { joinPlan } from './joinPlan'
 import { pickBuildForJoin } from '../state/buildPicker'
 import { track } from './telemetry'
-import { launchAttribution } from './uiTrack'
 import { ensureVersionBuild, pvpBuildName } from './versionBuild'
 import { pickVersionForServer } from './mcVersion'
 import { ensureMcVersionList, useMcVersionList } from '../state/mcVersionList'
@@ -200,7 +199,6 @@ export async function quickJoin(ip: string, name: string, licensed?: boolean, ve
   const rated = ratedSlug ? { slug: ratedSlug } : key ? useServers.getState().list.find((s) => s.slug && addrKey(s.ip) === key) : undefined
   track('server_join', {
     ...(rated ? { addr: ip.slice(0, 64), name: name.slice(0, 64), slug: rated.slug.slice(0, 80) } : { rated: false }),
-    ...launchAttribution('other'),
   })
   const own = await serverPackBuild(ip, name)
   if (own === SKIP_JOIN) return

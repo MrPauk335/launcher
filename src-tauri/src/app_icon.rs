@@ -210,7 +210,7 @@ mod shortcuts {
 mod shortcuts {
     use std::path::{Path, PathBuf};
 
-    const DESKTOP: &str = "millida-launcher.desktop";
+    const DESKTOP: &str = "notrace-launcher.desktop";
 
     fn entry() -> Option<PathBuf> {
         let base = std::env::var_os("XDG_DATA_HOME")

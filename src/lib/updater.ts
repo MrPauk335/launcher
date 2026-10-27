@@ -54,7 +54,21 @@ function updateFailed(where: string, e: unknown) {
   trackFailure('updater', e, { step: where })
 }
 
-const updatesAllowed = () => hasTauri() && !import.meta.env.DEV
+/**
+ * Updates are OFF in this build.
+ *
+ * The endpoints and the minisign public key in src-tauri/tauri.conf.json belong
+ * to Millida: an "update" would download the official build over this one and
+ * switch the usage statistics back on, together with everything that was
+ * removed here. The fallback channel in the core reads the same config, so both
+ * are silent.
+ *
+ * Turn this on only after you put YOUR OWN endpoints and YOUR OWN public key
+ * into src-tauri/tauri.conf.json and sign your own releases.
+ */
+const UPDATES_ENABLED = false
+
+const updatesAllowed = () => UPDATES_ENABLED && hasTauri() && !import.meta.env.DEV
 
 /// Flatpak updates itself and mounts /app read-only, so the fallback channel cannot install there.
 let managedOutside: boolean | null = null
@@ -410,6 +424,7 @@ export async function autoUpdate(): Promise<{ version: string } | null> {
 }
 
 export async function installUpdateOnExit(): Promise<boolean> {
+  if (!UPDATES_ENABLED) return false
   if (installing) return false
   if (fallbackFile) {
     installing = true
@@ -465,6 +480,7 @@ export async function applyFallback(): Promise<void> {
 }
 
 export async function applyUpdate(): Promise<void> {
+  if (!UPDATES_ENABLED) return
   const st = useUpdate.getState()
   if (st.busy) return
   if (await managedOutsideOnly()) {
@@ -515,7 +531,7 @@ export async function applyUpdate(): Promise<void> {
 
 export async function checkForUpdate(loud = false): Promise<UpdateInfo | null> {
   if (!updatesAllowed()) {
-    if (loud) showToast(hasTauri() ? t('В дев-запуске обновления отключены') : t('Обновления доступны в приложении лаунчера'), 'error')
+    if (loud) showToast(hasTauri() ? t('В этой сборке обновления отключены') : t('Обновления доступны в приложении лаунчера'), 'error')
     return null
   }
   if (await updatesManagedOutside()) {
